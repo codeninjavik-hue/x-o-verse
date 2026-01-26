@@ -1,0 +1,148 @@
+import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, RotateCcw, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import GameBoard from '@/components/GameBoard';
+import ScoreBoard from '@/components/ScoreBoard';
+import GameStatusDisplay from '@/components/GameStatus';
+import DifficultySelector from '@/components/DifficultySelector';
+import { useGameLogic } from '@/hooks/useGameLogic';
+import { getAIMove, Difficulty } from '@/utils/aiLogic';
+
+const PlayerVsAI = () => {
+  const {
+    board,
+    currentPlayer,
+    winner,
+    winningLine,
+    gameStatus,
+    scores,
+    makeMove,
+    resetGame,
+    resetAll,
+  } = useGameLogic();
+
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [isAIThinking, setIsAIThinking] = useState(false);
+
+  const handleAIMove = useCallback(() => {
+    if (currentPlayer === 'O' && gameStatus === 'playing') {
+      setIsAIThinking(true);
+      
+      // Add delay to simulate thinking
+      const thinkingTime = difficulty === 'hard' ? 800 : difficulty === 'medium' ? 500 : 300;
+      
+      setTimeout(() => {
+        const aiMoveIndex = getAIMove(board, difficulty);
+        if (aiMoveIndex !== -1) {
+          makeMove(aiMoveIndex);
+        }
+        setIsAIThinking(false);
+      }, thinkingTime);
+    }
+  }, [board, currentPlayer, gameStatus, difficulty, makeMove]);
+
+  useEffect(() => {
+    handleAIMove();
+  }, [currentPlayer, gameStatus, handleAIMove]);
+
+  const handlePlayerMove = (index: number) => {
+    if (currentPlayer === 'X' && !isAIThinking) {
+      makeMove(index);
+    }
+  };
+
+  const handleDifficultyChange = (newDifficulty: Difficulty) => {
+    setDifficulty(newDifficulty);
+    resetGame();
+  };
+
+  return (
+    <div className="min-h-screen grid-pattern relative overflow-hidden">
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="relative z-10 container mx-auto px-4 py-6 sm:py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8 sm:mb-12">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Back</span>
+            </Button>
+          </Link>
+          
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold">
+            <span className="neon-text">Player</span>
+            <span className="text-muted-foreground"> vs </span>
+            <span className="neon-text-magenta">Robot</span>
+          </h1>
+
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={resetGame} title="Restart Game">
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+            <Link to="/">
+              <Button variant="ghost" size="icon" title="Home">
+                <Home className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Difficulty Selector */}
+        <div className="mb-6 sm:mb-8">
+          <DifficultySelector
+            difficulty={difficulty}
+            onSelect={handleDifficultyChange}
+          />
+        </div>
+
+        {/* Score Board */}
+        <div className="mb-8 sm:mb-12">
+          <ScoreBoard 
+            scores={scores} 
+            currentPlayer={currentPlayer}
+            playerXName="You"
+            playerOName="Robot"
+          />
+        </div>
+
+        {/* Game Status */}
+        <div className="mb-6 sm:mb-8 min-h-[60px]">
+          <GameStatusDisplay
+            status={gameStatus}
+            winner={winner}
+            currentPlayer={currentPlayer}
+            isAIThinking={isAIThinking}
+          />
+        </div>
+
+        {/* Game Board */}
+        <div className="mb-8 sm:mb-12">
+          <GameBoard
+            board={board}
+            winningLine={winningLine}
+            onCellClick={handlePlayerMove}
+            disabled={gameStatus !== 'playing' || currentPlayer === 'O' || isAIThinking}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-4">
+          {gameStatus !== 'playing' && (
+            <Button variant="neon-magenta" size="lg" onClick={resetGame}>
+              Play Again
+            </Button>
+          )}
+          <Button variant="outline" size="lg" onClick={resetAll}>
+            Reset Scores
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PlayerVsAI;
