@@ -6,8 +6,10 @@ import GameBoard from '@/components/GameBoard';
 import ScoreBoard from '@/components/ScoreBoard';
 import GameStatusDisplay from '@/components/GameStatus';
 import DifficultySelector from '@/components/DifficultySelector';
+import Confetti from '@/components/Confetti';
 import { useGameLogic } from '@/hooks/useGameLogic';
 import { getAIMove, Difficulty } from '@/utils/aiLogic';
+
 
 const PlayerVsAI = () => {
   const {
@@ -59,6 +61,9 @@ const PlayerVsAI = () => {
 
   return (
     <div className="min-h-screen grid-pattern relative overflow-hidden">
+      {/* Confetti on win */}
+      <Confetti trigger={gameStatus === 'won'} winner={winner} />
+
       {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />

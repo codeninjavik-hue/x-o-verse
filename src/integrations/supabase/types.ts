@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      game_rooms: {
+        Row: {
+          board: string[] | null
+          created_at: string
+          current_player: string | null
+          draws: number | null
+          guest_id: string | null
+          guest_name: string | null
+          guest_score: number | null
+          host_id: string | null
+          host_name: string | null
+          host_score: number | null
+          id: string
+          room_code: string
+          status: string | null
+          updated_at: string
+          winner: string | null
+          winning_line: number[] | null
+        }
+        Insert: {
+          board?: string[] | null
+          created_at?: string
+          current_player?: string | null
+          draws?: number | null
+          guest_id?: string | null
+          guest_name?: string | null
+          guest_score?: number | null
+          host_id?: string | null
+          host_name?: string | null
+          host_score?: number | null
+          id?: string
+          room_code: string
+          status?: string | null
+          updated_at?: string
+          winner?: string | null
+          winning_line?: number[] | null
+        }
+        Update: {
+          board?: string[] | null
+          created_at?: string
+          current_player?: string | null
+          draws?: number | null
+          guest_id?: string | null
+          guest_name?: string | null
+          guest_score?: number | null
+          host_id?: string | null
+          host_name?: string | null
+          host_score?: number | null
+          id?: string
+          room_code?: string
+          status?: string | null
+          updated_at?: string
+          winner?: string | null
+          winning_line?: number[] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
