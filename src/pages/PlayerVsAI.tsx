@@ -10,7 +10,6 @@ import Confetti from '@/components/Confetti';
 import { useGameLogic } from '@/hooks/useGameLogic';
 import { getAIMove, Difficulty } from '@/utils/aiLogic';
 
-
 const PlayerVsAI = () => {
   const {
     board,
@@ -26,14 +25,12 @@ const PlayerVsAI = () => {
 
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [isAIThinking, setIsAIThinking] = useState(false);
+  const [matchCount, setMatchCount] = useState(0);
 
   const handleAIMove = useCallback(() => {
     if (currentPlayer === 'O' && gameStatus === 'playing') {
       setIsAIThinking(true);
-      
-      // Add delay to simulate thinking
       const thinkingTime = difficulty === 'hard' ? 800 : difficulty === 'medium' ? 500 : 300;
-      
       setTimeout(() => {
         const aiMoveIndex = getAIMove(board, difficulty);
         if (aiMoveIndex !== -1) {
@@ -59,12 +56,15 @@ const PlayerVsAI = () => {
     resetGame();
   };
 
+  const handlePlayAgain = () => {
+    resetGame();
+    setMatchCount((prev) => prev + 1);
+  };
+
   return (
     <div className="min-h-screen grid-pattern relative overflow-hidden">
-      {/* Confetti on win */}
       <Confetti trigger={gameStatus === 'won'} winner={winner} />
 
-      {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -85,7 +85,7 @@ const PlayerVsAI = () => {
           </h1>
 
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={resetGame} title="Restart Game">
+            <Button variant="outline" size="icon" onClick={handlePlayAgain} title="Restart Game">
               <RotateCcw className="w-4 h-4" />
             </Button>
             <Link to="/">
@@ -98,10 +98,7 @@ const PlayerVsAI = () => {
 
         {/* Difficulty Selector */}
         <div className="mb-6 sm:mb-8">
-          <DifficultySelector
-            difficulty={difficulty}
-            onSelect={handleDifficultyChange}
-          />
+          <DifficultySelector difficulty={difficulty} onSelect={handleDifficultyChange} />
         </div>
 
         {/* Score Board */}
@@ -111,6 +108,9 @@ const PlayerVsAI = () => {
             currentPlayer={currentPlayer}
             playerXName="You"
             playerOName="Robot"
+            winner={winner}
+            gameStatus={gameStatus}
+            matchCount={matchCount}
           />
         </div>
 
@@ -137,11 +137,11 @@ const PlayerVsAI = () => {
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">
           {gameStatus !== 'playing' && (
-            <Button variant="neon-magenta" size="lg" onClick={resetGame}>
+            <Button variant="neon-magenta" size="lg" onClick={handlePlayAgain}>
               Play Again
             </Button>
           )}
-          <Button variant="outline" size="lg" onClick={resetAll}>
+          <Button variant="outline" size="lg" onClick={() => { resetAll(); setMatchCount(0); }}>
             Reset Scores
           </Button>
         </div>

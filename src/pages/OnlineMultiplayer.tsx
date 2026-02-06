@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Home, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,13 @@ const OnlineMultiplayer = () => {
     leaveRoom,
     setError,
   } = useOnlineGame();
+
+  const [matchCount, setMatchCount] = useState(0);
+
+  const handleResetGame = async () => {
+    await resetGame();
+    setMatchCount((prev) => prev + 1);
+  };
 
   // Show room code input if not in a room
   if (!room) {
@@ -79,10 +87,8 @@ const OnlineMultiplayer = () => {
 
   return (
     <div className="min-h-screen grid-pattern relative overflow-hidden">
-      {/* Confetti on win */}
       <Confetti trigger={gameStatus === 'won'} winner={winner} />
 
-      {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-accent/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -107,7 +113,7 @@ const OnlineMultiplayer = () => {
 
           <div className="flex gap-2">
             {gameStatus !== 'playing' && (
-              <Button variant="outline" size="icon" onClick={resetGame} title="Restart Game">
+              <Button variant="outline" size="icon" onClick={handleResetGame} title="Restart Game">
                 <RotateCcw className="w-4 h-4" />
               </Button>
             )}
@@ -126,6 +132,9 @@ const OnlineMultiplayer = () => {
             currentPlayer={currentPlayer}
             playerXName={room.host_name}
             playerOName={room.guest_name}
+            winner={winner}
+            gameStatus={gameStatus}
+            matchCount={matchCount}
           />
           <div className="text-center mt-4">
             <span className="text-sm text-muted-foreground">Draws: {room.draws}</span>
@@ -168,7 +177,7 @@ const OnlineMultiplayer = () => {
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">
           {gameStatus !== 'playing' && (
-            <Button variant="neon" size="lg" onClick={resetGame}>
+            <Button variant="neon" size="lg" onClick={handleResetGame}>
               Play Again
             </Button>
           )}
