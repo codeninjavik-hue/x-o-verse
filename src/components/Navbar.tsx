@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Users, Bot, Globe, Settings, Home, Menu, X } from 'lucide-react';
+import { Gamepad2, Users, Bot, Globe, Settings, Home, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { to: '/', icon: Home, label: 'Home' },
-  { to: '/pvp', icon: Users, label: 'Player vs Player' },
-  { to: '/ai', icon: Bot, label: 'Player vs Robot' },
+  { to: '/', icon: Home, label: 'Game Hub' },
+  { to: '/pvp', icon: Users, label: 'PvP' },
+  { to: '/ai', icon: Bot, label: 'vs AI' },
   { to: '/online', icon: Globe, label: 'Online' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
@@ -22,21 +22,14 @@ const Navbar = () => {
       <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="grid grid-cols-2 gap-0.5">
-                <div className="w-2 h-2 rounded-sm bg-primary animate-pulse-glow" />
-                <div className="w-2 h-2 rounded-sm bg-secondary" />
-                <div className="w-2 h-2 rounded-sm bg-secondary" />
-                <div className="w-2 h-2 rounded-sm bg-primary animate-pulse-glow" style={{ animationDelay: '0.5s' }} />
-              </div>
+              <Gamepad2 className="w-6 h-6 text-primary animate-pulse-glow" />
               <span className="font-display font-bold text-lg">
-                <span className="text-primary">TIC TAC</span>
-                <span className="text-secondary"> TOE</span>
+                <span className="text-primary">GAME</span>
+                <span className="text-secondary"> ARENA</span>
               </span>
             </Link>
 
-            {/* Nav Links */}
             <div className="flex items-center gap-1">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.to;
@@ -67,22 +60,13 @@ const Navbar = () => {
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="flex items-center justify-between h-14 px-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="grid grid-cols-2 gap-0.5">
-              <div className="w-2 h-2 rounded-sm bg-primary" />
-              <div className="w-2 h-2 rounded-sm bg-secondary" />
-              <div className="w-2 h-2 rounded-sm bg-secondary" />
-              <div className="w-2 h-2 rounded-sm bg-primary" />
-            </div>
+            <Gamepad2 className="w-5 h-5 text-primary" />
             <span className="font-display font-bold text-sm">
-              <span className="text-primary">TIC TAC</span>
-              <span className="text-secondary"> TOE</span>
+              <span className="text-primary">GAME</span>
+              <span className="text-secondary"> ARENA</span>
             </span>
           </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
         </div>
@@ -117,7 +101,7 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Spacer for fixed navbar */}
+      {/* Spacer */}
       <div className="h-14 md:h-16" />
     </>
   );

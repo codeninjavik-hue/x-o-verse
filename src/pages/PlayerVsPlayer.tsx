@@ -6,6 +6,7 @@ import ScoreBoard from '@/components/ScoreBoard';
 import GameStatusDisplay from '@/components/GameStatus';
 import Confetti from '@/components/Confetti';
 import { useGameLogic } from '@/hooks/useGameLogic';
+import { useState } from 'react';
 
 const PlayerVsPlayer = () => {
   const {
@@ -20,12 +21,17 @@ const PlayerVsPlayer = () => {
     resetAll,
   } = useGameLogic();
 
+  const [matchCount, setMatchCount] = useState(0);
+
+  const handlePlayAgain = () => {
+    resetGame();
+    setMatchCount((prev) => prev + 1);
+  };
+
   return (
     <div className="min-h-screen grid-pattern relative overflow-hidden">
-      {/* Confetti on win */}
       <Confetti trigger={gameStatus === 'won'} winner={winner} />
 
-      {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -46,7 +52,7 @@ const PlayerVsPlayer = () => {
           </h1>
 
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={resetGame} title="Restart Game">
+            <Button variant="outline" size="icon" onClick={handlePlayAgain} title="Restart Game">
               <RotateCcw className="w-4 h-4" />
             </Button>
             <Link to="/">
@@ -64,6 +70,9 @@ const PlayerVsPlayer = () => {
             currentPlayer={currentPlayer}
             playerXName="Player 1"
             playerOName="Player 2"
+            winner={winner}
+            gameStatus={gameStatus}
+            matchCount={matchCount}
           />
         </div>
 
@@ -89,11 +98,11 @@ const PlayerVsPlayer = () => {
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">
           {gameStatus !== 'playing' && (
-            <Button variant="neon" size="lg" onClick={resetGame}>
+            <Button variant="neon" size="lg" onClick={handlePlayAgain}>
               Play Again
             </Button>
           )}
-          <Button variant="outline" size="lg" onClick={resetAll}>
+          <Button variant="outline" size="lg" onClick={() => { resetAll(); setMatchCount(0); }}>
             Reset Scores
           </Button>
         </div>
